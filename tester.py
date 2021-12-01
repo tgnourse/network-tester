@@ -12,14 +12,6 @@ def upload_data(host, port, user, password, dbname, data):
     return client.write_points(data)
 
 
-# Expecting a dict of name : ips
-def get_results_dict(destinations):
-    results = {}
-    for name, ip in destinations.items():
-        results[(name, ip)] = ping(ip, count=1)
-    return results
-
-
 def get_results(destinations):
     results = {}
     for ip in destinations:
@@ -68,9 +60,8 @@ upload_data(
 
 # Must haves
 # TODO: Cache if upload to Grafana fails
+# TODO: Gather connected SSID automatically
 
 # Nice to haves
-# TODO: Include names with IP addresses
-# TODO: Gather things like connected SSID automatically
 # TODO: Add SpeedTest integration, maybe this: https://github.com/sivel/speedtest-cli
 # TODO: Add traceroute integration, maybe this: https://github.com/hardikvasa/webb
