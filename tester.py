@@ -27,7 +27,7 @@ def get_results(destinations):
     return results
 
 
-def transform_points(ip_results):
+def transform_points(ip_results, device, ssid, device_area):
     points = []
     for ip, results in ip_results.items():
         for result in results:
@@ -38,6 +38,9 @@ def transform_points(ip_results):
                         'ip': ip,
                         'success': result.success,
                         'error_message': result.error_message,
+                        'device': device,
+                        'ssid': ssid,
+                        'device_area': device_area,
                     },
                     'fields': {
                         'time_elapsed_ms': float(result.time_elapsed_ms)
@@ -53,20 +56,21 @@ parser.add_argument('--influxdb_port', type=int, default=8086)
 parser.add_argument('--influxdb_user')
 parser.add_argument('--influxdb_password')
 parser.add_argument('--influxdb_database')
+parser.add_argument('--device')  # every device should be unique
+parser.add_argument('--ssid')  # every device should be unique
+parser.add_argument('--device_area')  # up to anyone how to define this
 parser.add_argument('destinations', nargs='+')
 args = parser.parse_args()
 
 upload_data(
     args.influxdb_host, args.influxdb_port, args.influxdb_user, args.influxdb_password, args.influxdb_database,
-    transform_points(get_results(args.destinations)))
+    transform_points(get_results(args.destinations), args.device, args.ssid, args.device_area))
 
-# test_uploading(args.influxdb_host, args.influxdb_port, args.influxdb_user, args.influxdb_password, args.influxdb_database)
-# test_parsing()
-# test_reading()
-
+# Must haves
 # TODO: Cache if upload to Grafana fails
 
 # Nice to haves
 # TODO: Include names with IP addresses
+# TODO: Gather things like connected SSID automatically
 # TODO: Add SpeedTest integration, maybe this: https://github.com/sivel/speedtest-cli
 # TODO: Add traceroute integration, maybe this: https://github.com/hardikvasa/webb
